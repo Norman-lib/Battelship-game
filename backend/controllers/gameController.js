@@ -17,6 +17,7 @@ exports.createGame = async (req, res) => {
         const player = await Player.findById(playerId);
         game.players.push(player);
         game.playersShips.push({ [player.username]: ships });
+        game.gameCreator = player;
         await game.save();
         res.status(201).json(game);
     } catch (error) {
@@ -49,7 +50,26 @@ exports.joinGame = async (req, res) => {
 };
 
 exports.placeShips = async (req, res) => {
-    // Implement logic to place ships on a player's board
+    const { gameId, playerId , ships } = req.body;
+
+    try {
+        if (!gameId || !playerId || !ships) {
+                let missingParams = [];
+                if (!gameId) missingParams.push('gameId');
+                if (!playerId) missingParams.push('playerId');
+                if (!ships) missingParams.push('ships');
+                return res.status(400).json({ message: `Missing required parameters: ${missingParams.join(', ')}` });
+        }
+        const game = await Game.findById(gameId);
+        const player = await Player.findById(playerId);
+        // get move index
+        const index = game.boardStates.length;
+        game.boardStates.push({ [index]: ships });
+        // Add logic to add player to game and handle errors
+        res.status(200).json(game);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 exports.makeMove = async (req, res) => {
