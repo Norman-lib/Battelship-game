@@ -1,0 +1,12 @@
+
+
+.square {
+    background-color: white; /* White background */
+    padding-left: 0px; /* Optional: Adjust text position */
+    font-size: 24px; /* Optional: Adjust font size as needed */
+    cursor: pointer; /* Changes cursor to pointer on hover */
+    display: flex;
+    text-align: center;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+  }

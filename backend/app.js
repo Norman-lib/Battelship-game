@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000; // Corrected way to access PORT
 
-mongoose.connect(`mongodb+srv://Hamza_m:${process.env.PW}@battelship.bwzrdlo.mongodb.net/`, {
+mongoose.connect(`mmmongodb+srv://Hamza_m:${process.env.PW}@battelship.bwzrdlo.mongodb.net/`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => console.log('Connected to MongoDB!'));
