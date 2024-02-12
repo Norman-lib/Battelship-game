@@ -69,61 +69,103 @@
 
 
 import React from 'react'
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
-import { setShipPositions } from '../features/shipPositions/shipPositionsSlice';
+import { updateShipPosition } from '../features/shipPositions/shipPositionsSlice';
 import { useDispatch, useSelector } from 'react-redux'
 import Ship1 from './ships/ship1'
 import BoardSquare from './BoardSquare'
 
 
 
-function renderShip(shipPosition, i) {
-  const piece = shipPosition === i ? <Ship1 /> : null
-  return piece
 
+function renderShips(ships, i) {
+  for (let ship of ships) {
+    const piece = renderShip(ship, i, ship.id)
+    if (piece) {
+      return piece
+    }
+  }
 }
 
+function renderShip(ship, i) {
+  const shipPosition = ship.position
+  const shipSize = ship.nbSquares
+  let isShip = false
+  for (let j = 0; j < shipSize; j++) {
+    if (ship.isHorizontal && (shipPosition + j) === i) {
+      isShip = true
+    }
+    if (!ship.isHorizontal && (shipPosition + j * 8) === i) {
+      isShip = true
+    }
+  }
+  // let isShip = (shipPosition === i) || (ship.isHorizontal && (shipPosition + 1) === i) || (ship.isHorizontal && (shipPosition + 2) === i)
+  // if (!ship.isHorizontal) {
+  //   isShip = (shipPosition === i) || (shipPosition + 8 === i) || (shipPosition + 16 === i)
+  // }
+  const piece = isShip ? <Ship1 id={ship.id} /> : null
+  return piece
+}
 
-function renderSquare(i, position, moveShip) {
+function renderSquare(i, ships, moveShip) {
   return (
     <div key={i} style={{ width: '12.5%', height: '12.5%' }} onClick={() => {
       console.log("onClick", i);
       moveShip(i)
     }}>
-      <BoardSquare i={i} moveShip={(i) => moveShip(i)} >
-        {renderShip(position, i)}
+      <BoardSquare i={i} moveShip={(i,id) => moveShip(i, id)} >
+        {renderShips(ships, i)}
       </BoardSquare>
     </div>
   )
 }
 
 export default function Board() {
-  const shipPosition = useSelector((state) => state.shipPositions.value)
+  const shipPositions = useSelector((state) => {
+    console.log("state shipPositions changed")
+    return state.shipPositions.value})
   const dispatch = useDispatch()
-  function moveShip(i) {
-    // const randPos = () => Math.floor(Math.random() * 8)
-    // const i = randPos() * 8 + randPos()
-    dispatch(setShipPositions(i))
+  
+  function moveShip(i, shipIndex) {
+    const oldShip = shipPositions[shipIndex];
+    const newShip = {...oldShip, position: i}
+    dispatch(updateShipPosition(newShip))
   }
   const squares = []
   for (let i = 0; i < 64; i++) {
-    squares.push(renderSquare(i, shipPosition, moveShip));
+    squares.push(renderSquare(i, shipPositions, moveShip));
   }
+
+  function Drop(){
+
+  }
+
+  // const [{isOverr}, drop] = useDrop(
+  //   () => ({
+  //     accept: dragTypes.SHIP,
+  //     drop: () =>   console.log("drop"),
+  //     collect : (monitor) => ({
+  //       isOverr: !!monitor.isOver(),
+  //     })
+  //   }),
+  //   
+  // )
+  const isOver = true;
   return (
-    <DndProvider backend={HTML5Backend}>
+    
 
       <div
+       
         style={{
           width: '100vw',
           height: '100vh',
+          
           display: 'flex',
           flexWrap: 'wrap'
         }}
       >
         {squares}
+        
       </div>
-    </DndProvider>
   )
 }
 

@@ -7,11 +7,12 @@ const dragTypes = {
   SHIP: 'ship'
 }
 
-function Ship1({color = 'red' }){
+function Ship1({color = 'red', id}){
 
   
   const [{ isDragging }, drag] = useDrag(() => ({
     type: dragTypes.SHIP,
+    item : {id},
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging()
     })
@@ -20,10 +21,11 @@ function Ship1({color = 'red' }){
     <div
       ref={drag}
       style={{
-        opacity: isDragging ? 0.5 : 1,
+        opacity: isDragging ? 0 : 1,
         fontSize: 100,
         fontWeight: 'bold',
         cursor: 'move',
+        color: isDragging ? color : 'black' ,
       }}
     >
       ♘

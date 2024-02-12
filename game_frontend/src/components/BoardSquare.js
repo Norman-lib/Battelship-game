@@ -29,7 +29,7 @@ export default function BoardSquare({ i, children, moveShip }) {
   const [{isOver}, drop] = useDrop(
     () => ({
       accept: dragTypes.SHIP,
-      drop: () =>   moveShip(i),
+      drop: (item, monitor) =>   moveShip(i, item.id),
       collect : (monitor) => ({
         isOver: !!monitor.isOver(),
       })
